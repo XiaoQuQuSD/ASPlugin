@@ -1,5 +1,6 @@
 package ASPlugin;
 
+import ASPlugin.commands.WayPoint;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import ASPlugin.commands.CopyItem;
@@ -12,16 +13,20 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         getLogger().info("================================");
         getLogger().info(" AS Plugin - USUAL WORLD PLUGIN ");
-        getLogger().info("  Version 1.0, Developer XiaoQ ");
+        getLogger().info("  Version 1.2, Developer XiaoQ ");
         getLogger().info("================================");
         getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
         getServer().getPluginManager().registerEvents(new PlayerQuit(), this);
         getCommand("flight").setExecutor(new Flight());
         getCommand("cp").setExecutor(new CopyItem());
+        getCommand("waypoint").setExecutor(new WayPoint());
+        reloadConfig();
+//        getConfig().options().copyDefaults();
     }
 
     @Override
     public void onDisable() {
+        saveConfig();
         // Plugin shutdown logic
     }
 }

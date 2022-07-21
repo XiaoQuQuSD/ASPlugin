@@ -8,3 +8,5 @@ commands:
     description: Toggle Flight
   cp:
     description: Copy item in your hand
+  waypoint:
+    description: Create, Tp WayPoint
