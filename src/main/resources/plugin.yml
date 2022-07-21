@@ -1,0 +1,10 @@
+name: ASPlugin
+version: '${project.version}'
+main: ASPlugin.Main
+api-version: 1.16
+description: AS Plugin For My Own World
+commands:
+  flight:
+    description: Toggle Flight
+  cp:
+    description: Copy item in your hand
