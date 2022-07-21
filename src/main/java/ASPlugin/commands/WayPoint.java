@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 class WayPointA {
@@ -55,6 +57,9 @@ public class WayPoint implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command com, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            return false;
+        }
         Player p = (Player) sender;
         if (args.length == 0) {
             p.sendMessage(ChatColor.WHITE + "==========================");
@@ -73,7 +78,22 @@ public class WayPoint implements CommandExecutor {
             if (!plugin.getConfig().contains(waypointPath)) {
                 newWaypoint = true;
                 plugin.getConfig().createSection(waypointPath);
+                List<String> wps = plugin.getConfig().getStringList("WayPoints." + p.getName() + ".plist");
+                if (wps.isEmpty()) {
+                    List<String> l = new ArrayList<String>(0);
+                    l.add(waypointName);
+                    plugin.getConfig().set("WayPoints." + p.getName() + ".plist", l);
+                } else {
+                    wps.add(waypointName);
+                    plugin.getConfig().set("WayPoints." + p.getName() + ".plist", wps);
+                }
             }
+            if (newWaypoint || plugin.getConfig().getBoolean(waypointPath + ".show") == false)
+                p.sendMessage(ChatColor.GREEN + "Added WayPoint (" + p.getLocation().getX() + ","
+                        + p.getLocation().getY() + "," + p.getLocation().getZ() + ")");
+            else
+                p.sendMessage(ChatColor.GREEN + "Edited WayPoint to (" + p.getLocation().getX() + ","
+                        + p.getLocation().getY() + "," + p.getLocation().getZ() + ")");
             plugin.getConfig().set(waypointPath + ".x", p.getLocation().getX());
             plugin.getConfig().set(waypointPath + ".y", p.getLocation().getY());
             plugin.getConfig().set(waypointPath + ".z", p.getLocation().getZ());
@@ -82,12 +102,6 @@ public class WayPoint implements CommandExecutor {
             // plugin.getConfig().save("config.yml");
             // create a new a point.
             logInfo("Created a new waypoint for " + p.getName());
-            if (newWaypoint)
-                p.sendMessage(ChatColor.GREEN + "Added WayPoint (" + p.getLocation().getX() + ","
-                        + p.getLocation().getY() + "," + p.getLocation().getZ() + ")");
-            else
-                p.sendMessage(ChatColor.GREEN + "Edited WayPoint to (" + p.getLocation().getX() + ","
-                        + p.getLocation().getY() + "," + p.getLocation().getZ() + ")");
         } else if (Objects.equals(args[0], "rm") || Objects.equals(args[0], "remove")) {
             if (args.length <= 1) {
                 p.sendMessage(ChatColor.RED + "You must provide waypoint's name.");
@@ -113,6 +127,22 @@ public class WayPoint implements CommandExecutor {
             Location tarLoc = new Location(p.getWorld(), x, y, z);
             p.teleport(tarLoc);
             p.sendMessage(ChatColor.GREEN + "Teleported! BYE!");
+        } else if (Objects.equals(args[0], "list")) {
+            List<String> l = plugin.getConfig().getStringList("Waypoints." + p.getName() + ".plist");
+            if (l.isEmpty()) {
+                p.sendMessage(ChatColor.RED + "Sorry, you don't have any waypoints now.");
+                return false;
+            }
+            p.sendMessage("You have " + l.size() + " waypoint(s)"); 
+            Integer i = 1;
+            for (String wp : l) {
+                String waypointName = wp;
+                String waypointPath = "WayPoints." + p.getName() + "." + waypointName;
+                Double x = plugin.getConfig().getDouble(waypointPath + ".x");
+                Double y = plugin.getConfig().getDouble(waypointPath + ".y");
+                Double z = plugin.getConfig().getDouble(waypointPath + ".z");
+                p.sendMessage(i + ". " + waypointName + ", at (" + x + "," + y + "," + z + ").");
+            }
         }
         return false;
     }

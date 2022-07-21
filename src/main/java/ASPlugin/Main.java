@@ -13,7 +13,7 @@ public final class Main extends JavaPlugin {
     public void onEnable() {
         getLogger().info("================================");
         getLogger().info(" AS Plugin - USUAL WORLD PLUGIN ");
-        getLogger().info("  Version 1.2, Developer XiaoQ ");
+        getLogger().info("  Version 1.3, Developer XiaoQ ");
         getLogger().info("================================");
         getServer().getPluginManager().registerEvents(new PlayerJoin(), this);
         getServer().getPluginManager().registerEvents(new PlayerQuit(), this);
@@ -21,7 +21,6 @@ public final class Main extends JavaPlugin {
         getCommand("cp").setExecutor(new CopyItem());
         getCommand("waypoint").setExecutor(new WayPoint());
         reloadConfig();
-//        getConfig().options().copyDefaults();
     }
 
     @Override
